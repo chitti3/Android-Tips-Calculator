@@ -9,10 +9,12 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.icu.text.SimpleDateFormat;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -25,7 +27,11 @@ import com.example.news.Model.Headlines;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
+import org.ocpsoft.prettytime.PrettyTime;
+import org.ocpsoft.prettytime.format.SimpleTimeFormat;
+
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -44,6 +50,7 @@ public class Home extends AppCompatActivity implements  NavigationView.OnNavigat
     ProgressBar progressBar;
     RecyclerView recyclerView;
     Adapter adapter;
+    SwipeRefreshLayout swipeRefreshLayout;
     final String apikey="9c952917eb4c4d20ac26b29cd474bc07";
     List<Articles> articles = new ArrayList<>();
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -53,16 +60,23 @@ public class Home extends AppCompatActivity implements  NavigationView.OnNavigat
         setContentView(R.layout.activity_home);
         drawerLayout=findViewById(R.id.drawer);
         toolbar=findViewById(R.id.toolba);
+       swipeRefreshLayout=findViewById(R.id.swipe);
         navigationView=findViewById(R.id.navigation);
      progressBar=findViewById(R.id.simpleProgressBar);
      progressBar.setVisibility(ProgressBar.VISIBLE);
-    // progressBar.setTooltipText("Loading");
+
         recyclerView=findViewById(R.id.recycler);
         RecyclerView.LayoutManager layoutManager= new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(layoutManager);
-        // recyclerView.setAdapter(recyclerAdpater);
-        String country =getCountry();
+
+      final String country =getCountry();
         retrieve(country,apikey);
+       swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                retrieve(country,apikey);
+            }
+        });
         Floating = findViewById(R.id.floating);
         Floating.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -146,6 +160,7 @@ public class Home extends AppCompatActivity implements  NavigationView.OnNavigat
         return true;
     }*/
     private void retrieve(String country,String apikey){
+        swipeRefreshLayout.setRefreshing(true);
         ApiInterface apiInterface = Client.getRetrofit().create(ApiInterface.class);
         Call<Headlines> call = apiInterface.getHeadlines(country,apikey);
         call.enqueue(new Callback<Headlines>() {
@@ -153,16 +168,19 @@ public class Home extends AppCompatActivity implements  NavigationView.OnNavigat
             public void onResponse(Call<Headlines> call, Response<Headlines> response) {
                 if(response.isSuccessful() && response.body().getArticles() != null)
                 {
+                    swipeRefreshLayout.setRefreshing(true);
                     articles.clear();
                     articles=response.body().getArticles();
                     adapter = new Adapter(Home.this,articles);
                     recyclerView.setAdapter(adapter);
                     progressBar.setVisibility(ProgressBar.INVISIBLE);
+                    swipeRefreshLayout.setRefreshing(false);
                 }
             }
 
             @Override
             public void onFailure(Call<Headlines> call, Throwable t) {
+                swipeRefreshLayout.setRefreshing(false);
                 Toast.makeText(Home.this, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
             }
         });
@@ -222,4 +240,6 @@ public class Home extends AppCompatActivity implements  NavigationView.OnNavigat
 
         return true;
     }
+
+
 }
