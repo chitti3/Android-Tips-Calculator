@@ -5,8 +5,12 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.core.view.MenuItemCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -14,12 +18,18 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.icu.text.SimpleDateFormat;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.example.news.Model.Articles;
@@ -27,11 +37,7 @@ import com.example.news.Model.Headlines;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
-import org.ocpsoft.prettytime.PrettyTime;
-import org.ocpsoft.prettytime.format.SimpleTimeFormat;
-
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -47,9 +53,14 @@ public class Home extends AppCompatActivity implements  NavigationView.OnNavigat
     ActionBarDrawerToggle actionBarDrawerToggle;
     Recycle recycle;
     FloatingActionButton Floating;
+    Profile pro;
     ProgressBar progressBar;
     RecyclerView recyclerView;
+    EditText query;
+    Button Search;
     Adapter adapter;
+    SearchView searchView = null;
+    SearchView.OnQueryTextListener queryTextListener;
     SwipeRefreshLayout swipeRefreshLayout;
     final String apikey="9c952917eb4c4d20ac26b29cd474bc07";
     List<Articles> articles = new ArrayList<>();
@@ -57,24 +68,54 @@ public class Home extends AppCompatActivity implements  NavigationView.OnNavigat
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         setContentView(R.layout.activity_home);
         drawerLayout=findViewById(R.id.drawer);
-        toolbar=findViewById(R.id.toolba);
+        toolbar=findViewById(R.id.hello);
        swipeRefreshLayout=findViewById(R.id.swipe);
         navigationView=findViewById(R.id.navigation);
      progressBar=findViewById(R.id.simpleProgressBar);
      progressBar.setVisibility(ProgressBar.VISIBLE);
+      query=findViewById(R.id.euery);
+        final String country =getCountry();
+      Search=findViewById(R.id.search);
+      Search.setOnClickListener(new View.OnClickListener() {
+          @Override
+          public void onClick(View v) {
+             if (!query.getText().toString().equals(""))
+             {
+                 swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                     @Override
+                     public void onRefresh() {
+                         retrieve(query.getText().toString(),"",apikey);
+                     }
+                 });
+                 retrieve(query.getText().toString(),"",apikey);
+             }else {
+                 swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                     @Override
+                     public void onRefresh() {
+                         retrieve("",country,apikey);
+                     }
+                 });
 
+                 retrieve("",country,apikey);
+             }
+
+
+              //  Toast.makeText(Home.this, Query, Toast.LENGTH_SHORT).show();
+          }
+      });
         recyclerView=findViewById(R.id.recycler);
         RecyclerView.LayoutManager layoutManager= new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(layoutManager);
 
-      final String country =getCountry();
-        retrieve(country,apikey);
+     // final String country =getCountry();
+        retrieve("",country,apikey);
        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                retrieve(country,apikey);
+                retrieve("",country,apikey);
             }
         });
         Floating = findViewById(R.id.floating);
@@ -159,10 +200,19 @@ public class Home extends AppCompatActivity implements  NavigationView.OnNavigat
 
         return true;
     }*/
-    private void retrieve(String country,String apikey){
+    private void retrieve(String Query,String country,String apikey){
         swipeRefreshLayout.setRefreshing(true);
         ApiInterface apiInterface = Client.getRetrofit().create(ApiInterface.class);
-        Call<Headlines> call = apiInterface.getHeadlines(country,apikey);
+        Call<Headlines> call;
+        if (!query.getText().toString().equals(""))
+        {
+            call = apiInterface.geteeverything(Query,apikey);
+        }
+        else {
+            call = apiInterface.getHeadlines(country,apikey);
+        }
+
+         //call = apiInterface.getHeadlines(country,apikey);
         call.enqueue(new Callback<Headlines>() {
             @Override
             public void onResponse(Call<Headlines> call, Response<Headlines> response) {
@@ -175,6 +225,7 @@ public class Home extends AppCompatActivity implements  NavigationView.OnNavigat
                     recyclerView.setAdapter(adapter);
                     progressBar.setVisibility(ProgressBar.INVISIBLE);
                     swipeRefreshLayout.setRefreshing(false);
+                    Log.e("hellp00",response.body().getTotalResults());
                 }
             }
 
@@ -199,11 +250,12 @@ public class Home extends AppCompatActivity implements  NavigationView.OnNavigat
         switch (menuItem.getItemId())
         {
             case R.id.profile:
-                Toast.makeText(this, "Profile", Toast.LENGTH_SHORT).show();
+                pro=new Profile();
+                navigationView(pro);
+               Toast.makeText(this, "Profile", Toast.LENGTH_SHORT).show();
                 // Intent intent = new Intent(getApplicationContext(), Profile.class);
                 // intent.putExtra("SELECTEDVALUE", 2);//1 for fragament A use 2 for fragment B
                 // startActivity(intent);
-
 
                 break;
             case R.id.mm:
@@ -237,9 +289,14 @@ public class Home extends AppCompatActivity implements  NavigationView.OnNavigat
                 Toast.makeText(this, "Logout", Toast.LENGTH_SHORT).show();
                 break;
         }
-
+     drawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
 
-
+    private void navigationView(Fragment fragment) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+       fragmentTransaction.replace(R.id.frame,fragment);
+        fragmentTransaction.commit();
+    }
 }

@@ -16,6 +16,18 @@ public class Articles {
     @SerializedName("description")
     @Expose
     private String description;
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    @SerializedName("url")
+    @Expose
+    private String url;
     @SerializedName("urlToImage")
     @Expose
     private String urlToImage;

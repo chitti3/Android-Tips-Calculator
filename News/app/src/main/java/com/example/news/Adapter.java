@@ -50,7 +50,8 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         holder.tvTitle.setText(a.getTitle());
         //get source ke saath .getname lagana hai 32.36 part 1
         holder.tvSource.setText(a.getSource().getName());
-        holder.tvDate.setText(datetime(a.getPublishedAt()));
+        holder.tvDate.setText(a.getPublishedAt());
+     //holder.tvDate.setText(datetime(a.getPublishedAt()));
         final String imageUrl=a.getUrlToImage();
         //picasso ka syntax new 33.07 part1
         Picasso.get().load(imageUrl).into(holder.imageView);
@@ -61,8 +62,12 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
                 Intent intent = new Intent(v.getContext(),Detailed.class);
                 intent.putExtra("Title",a.getTitle());
                 intent.putExtra("Name",a.getSource().getName());
-                intent.putExtra("Date",a.getPublishedAt());
+          //intent.putExtra("Date",datetime(a.getPublishedAt()));
+              intent.putExtra("Date",a.getPublishedAt());
                 intent.putExtra("image",imageUrl);
+                intent.putExtra("desc",a.getDescription());
+             intent.putExtra("url",a.getUrl());
+                context.startActivity(intent);
             }
         });
     }

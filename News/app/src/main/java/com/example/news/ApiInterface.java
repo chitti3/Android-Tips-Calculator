@@ -12,4 +12,10 @@ public interface ApiInterface {
             @Query("country") String country,
             @Query("apiKey") String apiKey
     );
+
+    @GET("everything")
+    Call<Headlines> geteeverything(
+            @Query("q") String q,
+            @Query("apiKey") String apiKey
+    );
 }
