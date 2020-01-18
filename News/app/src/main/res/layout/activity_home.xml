@@ -37,15 +37,16 @@
             android:layout_marginLeft="150dp"
             android:visibility="invisible" />
         <LinearLayout
-            android:layout_width="370dp"
+            android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:background="@color/black"
+            android:background="@color/colorPrimaryDark"
             android:layout_marginTop="25dp"
             android:orientation="horizontal">
             <EditText
-                android:layout_width="280dp"
+                android:layout_width="250dp"
                 android:layout_height="30dp"
                 android:id="@+id/euery"
+                android:inputType="textNoSuggestions"
                 android:layout_marginLeft="5dp"
                 android:textColor="@color/black"
                 android:background="@color/white"
@@ -53,16 +54,99 @@
                 android:hint="Search"/>
 
             <Button
-                android:layout_width="50dp"
+                android:layout_width="40dp"
                 android:id="@+id/search"
+                android:background="@color/colorPrimaryDark"
                 android:layout_marginLeft="10dp"
-                android:layout_height="wrap_content"
-               android:drawableRight="@drawable/search"/>
+                android:layout_height="40dp"
+              android:drawableStart="@drawable/search"
+                tools:ignore="RtlCompat" />
+            <Button
+                android:layout_width="40dp"
+                android:id="@+id/fil"
+                android:background="@color/colorPrimaryDark"
+                android:layout_marginLeft="10dp"
+                android:layout_height="40dp"
+                android:drawableStart="@drawable/ic_filter"
+                android:drawableLeft="@drawable/ic_filter" />
         </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginTop="72dp">
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:orientation="horizontal"
+            android:background="@color/colorAccent"
+            android:layout_marginTop="10dp">
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/id1"
+                android:textColor="@color/black"
+                android:layout_marginLeft="5dp"
+                android:textSize="20dp"
+                android:text="Business"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/id2"
+                android:layout_marginLeft="10dp"
+                android:textColor="@color/black"
+                android:textSize="20dp"
+                android:text="Entertainment"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/id3"
+                android:textColor="@color/black"
+                android:layout_marginLeft="10dp"
+                android:textSize="20dp"
+                android:text="General"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/id4"
+                android:layout_marginLeft="10dp"
+                android:textColor="@color/black"
+                android:textSize="20dp"
+                android:text="health"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/id5"
+                android:textColor="@color/black"
+                android:layout_marginLeft="10dp"
+                android:textSize="20dp"
+                android:text="science"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/id6"
+                android:textColor="@color/black"
+                android:textSize="20dp"
+                android:layout_marginLeft="10dp"
+                android:text="sports"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/id7"
+                android:textColor="@color/black"
+                android:textSize="20dp"
+                android:layout_marginLeft="10dp"
+                android:text="Technology"/>
+        </LinearLayout>
+</HorizontalScrollView>
+    </LinearLayout>
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler"
-            android:layout_marginTop="70dp"
+            android:layout_marginTop="110dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             />
@@ -87,7 +171,7 @@
         <androidx.appcompat.widget.Toolbar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/hello"
+            android:id="@+id/tool"
             app:menu="@menu/toolbar"
             android:background="@color/colorPrimaryDark"/>
 

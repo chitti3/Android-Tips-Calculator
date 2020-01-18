@@ -7,6 +7,7 @@ import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Query;
 
 public interface Interface {
 
@@ -38,6 +39,13 @@ public interface Interface {
 
     @GET("Senthil/coisub.php")
     Call<List<Spojo>> coisub();
+
+
+    @FormUrlEncoded
+    @POST("/Senthil/user.php")
+    Call<user> user(
+            @Field("email") String email
+    );
 
     @FormUrlEncoded
     @POST("/Senthil/Login.php")

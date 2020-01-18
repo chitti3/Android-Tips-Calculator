@@ -1,31 +1,42 @@
 package com.example.news;
 
+import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import androidx.fragment.app.Fragment;
+import java.util.List;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
-
-/**
- * A simple {@link Fragment} subclass.
- */
-public class Profile extends Fragment {
-
-
-    public Profile() {
-        // Required empty public constructor
-    }
-
-
+public class Profile extends AppCompatActivity {
+TextView textView;
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile, container, false);
-    }
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_profile);
+        Intent intent = getIntent();
+        String email = intent.getStringExtra("email");
+textView = findViewById(R.id.text);
+        Interface inter = LClient.getRetrofit().create(Interface.class);
+        Call<user> call=inter.user(email);
 
+     call.enqueue(new Callback<user>() {
+         @Override
+         public void onResponse(Call<user> call, Response<user> response) {
+             Toast.makeText(Profile.this, response.body().getFname(), Toast.LENGTH_SHORT).show();
+         }
+
+         @Override
+         public void onFailure(Call<user> call, Throwable t) {
+             Toast.makeText(Profile.this, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+         }
+     });
+
+    }
 }

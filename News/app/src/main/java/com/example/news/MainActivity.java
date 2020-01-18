@@ -41,7 +41,7 @@ Button loginn;
         loginn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String emaill=email.getText().toString().trim();
+                final String emaill=email.getText().toString().trim();
                 String passs=pass.getText().toString().trim();
                 simpleProgressBar.setVisibility(ProgressBar.VISIBLE);
                 if (emaill.isEmpty())
@@ -62,6 +62,8 @@ Button loginn;
                          {
                              Intent logiii = new Intent(MainActivity.this,Home.class);
                              startActivity(logiii);
+                             Intent pass = new Intent(MainActivity.this,Profile.class);
+                             pass.putExtra("email",emaill);
                             simpleProgressBar.setVisibility(ProgressBar.INVISIBLE);
                          }else if (response.body().getResponse().equals("Failed"))
                          {
